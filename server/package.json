@@ -1,0 +1,53 @@
+{
+  "name": "server-finca",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev":"nodemon ./src/index.js",
+
+    "show_tables": "node ./src/initial_setups/showTables.js",
+    "create_branch_table":"node ./src/initial_setups/createBranchTable.js",
+    "create_customer_table":"node ./src/initial_setups/createCustomerTable.js",
+    "create_group_table":"node ./src/initial_setups/createGroupTable.js",
+    "create_complaint_table":"node ./src/initial_setups/createComplaintTable.js",
+    "create_loan_application_table":"node ./src/initial_setups/createLoanApplicationTable.js",
+    "create_loan_table":"node ./src/initial_setups/createLoanTable.js",
+    "create_loan_repayment_table":"node ./src/initial_setups/createLoanRepaymentTable.js",
+    "create_loan_disbursement_table":"node ./src/initial_setups/createLoanDisbursementTable.js",
+    "create_loan_product_table":"node ./src/initial_setups/createLoanProductTable.js",
+    "create_staff_table":"node ./src/initial_setups/createStaffTable.js",
+    "create_role_table":"node ./src/initial_setups/createRoleTable.js",
+    "create_loan_write_off_table":"node ./src/initial_setups/createLoanWriteOffTable.js",
+    "create_collateral_table":"node ./src/initial_setups/createCollateralTable.js",
+    "create_payment_methods_table":"node ./src/initial_setups/createPaymentMethodsTable.js",
+    "create_loan_insurance_table":"node ./src/initial_setups/createLoanInsuranceTable.js",
+    "create_guarantor_table":"node ./src/initial_setups/createGuarantorTable.js",
+
+    "seed_branches":"node ./src/initial_setups/seed/branch.js",
+    "seed_customers":"node ./src/initial_setups/seed/customers.js",
+    "seed_groups":"node ./src/initial_setups/seed/groups.js",
+    "seed_roles":"node ./src/initial_setups/seed/role.js",
+    "seed_staff":"node ./src/initial_setups/seed/staff.js",
+    "seed_loan_product":"node ./src/initial_setups/seed/loan_product.js",
+    "seed_loan_application":"node ./src/initial_setups/seed/loan_application.js",
+    "seed_guarantor":"node ./src/initial_setups/seed/guarantor.js",
+    "seed_payment_methods":"node ./src/initial_setups/seed/paymentMethods.js"
+
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "mysql2": "^3.14.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
