@@ -1,13 +1,12 @@
-
 import db from "../config/db.js";
 
 // ✅ Get all complaints
 export async function getComplaints(req, res) {
   try {
     const [rows] = await db.query(`
-      SELECT c.*, l.loan_amount 
-      FROM complaints c
-      LEFT JOIN loan l ON c.loan_id = l.loan_id
+      SELECT complaint_id, customer_id, complaint_text, status, created_at
+      FROM complaints
+      ORDER BY created_at DESC
     `);
     res.json({ success: true, data: rows });
   } catch (err) {
@@ -19,7 +18,10 @@ export async function getComplaints(req, res) {
 // ✅ Get one complaint by ID
 export async function getComplaintById(req, res) {
   try {
-    const [rows] = await db.query("SELECT * FROM complaints WHERE complaint_id=?", [req.params.id]);
+    const [rows] = await db.query(
+      "SELECT complaint_id, customer_id, complaint_text, status, created_at FROM complaints WHERE complaint_id=?",
+      [req.params.id]
+    );
     if (rows.length === 0)
       return res.status(404).json({ success: false, message: "Complaint not found" });
     res.json({ success: true, data: rows[0] });
@@ -32,11 +34,11 @@ export async function getComplaintById(req, res) {
 // ✅ Create new complaint
 export async function createComplaint(req, res) {
   try {
-    const { loan_id, complaint_date, complaint_text, status } = req.body;
+    const { customer_id, complaint_text, status } = req.body;
 
     const [result] = await db.query(
-      "INSERT INTO complaints (loan_id, complaint_date, complaint_text, status) VALUES (?,?,?,?)",
-      [loan_id, complaint_date, complaint_text, status || "Open"]
+      "INSERT INTO complaints (customer_id, complaint_text, status) VALUES (?,?,?)",
+      [customer_id, complaint_text, status || "Open"]
     );
 
     res.json({ success: true, id: result.insertId });
@@ -49,11 +51,11 @@ export async function createComplaint(req, res) {
 // ✅ Update complaint
 export async function updateComplaint(req, res) {
   try {
-    const { loan_id, complaint_date, complaint_text, status } = req.body;
+    const { customer_id, complaint_text, status } = req.body;
 
     await db.query(
-      "UPDATE complaints SET loan_id=?, complaint_date=?, complaint_text=?, status=? WHERE complaint_id=?",
-      [loan_id, complaint_date, complaint_text, status, req.params.id]
+      "UPDATE complaints SET customer_id=?, complaint_text=?, status=? WHERE complaint_id=?",
+      [customer_id, complaint_text, status, req.params.id]
     );
 
     res.json({ success: true });

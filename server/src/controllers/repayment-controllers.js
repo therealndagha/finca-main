@@ -1,4 +1,3 @@
-
 // controllers/repaymentController.js
 import db from "../config/db.js";
 
@@ -20,9 +19,10 @@ export async function getRepayments(req, res) {
  */
 export async function getRepaymentsByLoan(req, res) {
   try {
-    const [rows] = await db.query("SELECT * FROM loan_repayments WHERE loan_id=?", [
-    req.params.loan_id,
-  ]);
+    const [rows] = await db.query(
+      "SELECT * FROM loan_repayments WHERE loan_id=?",
+      [req.params.loan_id]
+    );
     res.json({ success: true, data: rows });
   } catch (err) {
     console.error(err);
@@ -34,23 +34,22 @@ export async function getRepaymentsByLoan(req, res) {
  * Create a repayment, update the balance automatically
  */
 export async function createRepayment(req, res) {
-  const { loan_id, repayment_date, amount_paid, payment_method_id } = req.body;
+  const { loan_id, repayment_date, amount_paid, payment_method } = req.body;
 
   try {
-    // Get the last known balance for this loan
+    // Get the last known balance
     const [lastRepayment] = await db.query(
       `SELECT balance FROM loan_repayments 
        WHERE loan_id=? ORDER BY repayment_id DESC LIMIT 1`,
       [loan_id]
     );
 
-    // If no repayments yet, balance is the original loan_amount
     let currentBalance;
     if (lastRepayment.length > 0) {
       currentBalance = parseFloat(lastRepayment[0].balance);
     } else {
       const [loanRow] = await db.query(
-        "SELECT loan_amount FROM loan WHERE loan_id=?",
+        "SELECT loan_amount FROM loans WHERE loan_id=?",
         [loan_id]
       );
       if (loanRow.length === 0)
@@ -65,7 +64,6 @@ export async function createRepayment(req, res) {
       });
     }
 
-    // Compute new balance
     const newBalance = currentBalance - parseFloat(amount_paid);
     if (newBalance < 0) {
       return res.status(400).json({
@@ -74,17 +72,15 @@ export async function createRepayment(req, res) {
       });
     }
 
-    // Insert repayment
     const [result] = await db.query(
       `INSERT INTO loan_repayments 
-        (loan_id, repayment_date, amount_paid, balance, payment_method_id) 
+        (loan_id, repayment_date, amount_paid, balance, payment_method) 
        VALUES (?,?,?,?,?)`,
-      [loan_id, repayment_date, amount_paid, newBalance, payment_method_id]
+      [loan_id, repayment_date, amount_paid, newBalance, payment_method]
     );
 
-    // Optionally, mark loan as “Paid” if newBalance hits 0
     if (newBalance === 0) {
-      await db.query("UPDATE loan SET status='Paid' WHERE loan_id=?", [loan_id]);
+      await db.query("UPDATE loans SET status='Completed' WHERE loan_id=?", [loan_id]);
     }
 
     res.json({
@@ -99,7 +95,7 @@ export async function createRepayment(req, res) {
 }
 
 /**
- * Delete repayment (optional)
+ * Delete repayment
  */
 export async function deleteRepayment(req, res) {
   try {

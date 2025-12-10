@@ -2,7 +2,7 @@ import db from '../config/db.js'
 
 export const getAll = async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM loan_application");
+    const [rows] = await db.query("SELECT * FROM loan_applications");
     res.json({ success: true, data: rows });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -12,7 +12,7 @@ export const getAll = async (req, res) => {
 export const getOne = async (req, res) => {
   try {
     const [rows] = await db.query(
-      "SELECT * FROM loan_application WHERE loan_application_id = ?",
+      "SELECT * FROM loan_applications WHERE loan_application_id = ?",
       [req.params.id]
     );
     res.json({ success: true, data: rows[0] });
@@ -34,7 +34,7 @@ export const create = async (req, res) => {
       guarantor_id,
     } = req.body;
     const [result] = await db.query(
-      `INSERT INTO loan_application 
+      `INSERT INTO loan_applications 
        (customer_id, group_id, product_id, branch_id, amount_applied, tenure_months, status, guarantor_id)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
@@ -67,7 +67,7 @@ export const update = async (req, res) => {
       guarantor_id,
     } = req.body;
     await db.query(
-      `UPDATE loan_application 
+      `UPDATE loan_applications 
        SET customer_id=?, group_id=?, product_id=?, branch_id=?, amount_applied=?, tenure_months=?, status=?, guarantor_id=? 
        WHERE loan_application_id=?`,
       [
@@ -90,7 +90,7 @@ export const update = async (req, res) => {
 
 export const remove = async (req, res) => {
   try {
-    await db.query("DELETE FROM loan_application WHERE loan_application_id=?", [
+    await db.query("DELETE FROM loan_applications WHERE loan_application_id=?", [
       req.params.id,
     ]);
     res.json({ success: true });

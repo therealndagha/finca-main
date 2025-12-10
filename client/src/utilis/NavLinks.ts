@@ -5,7 +5,13 @@ export type NavObj = {
 }
 
 export const navLinks: NavObj[] = [
+    
     {
+        name: 'Dashboard',
+        path: '/'
+    },
+    {
+        
         name: 'Branches',
         path: '/branches',
 
@@ -42,9 +48,5 @@ export const navLinks: NavObj[] = [
     {
         name: 'Repayments',
         path: '/repayments'
-    },
-    {
-        name: 'Others',
-        path: '/others'
     }
 ]

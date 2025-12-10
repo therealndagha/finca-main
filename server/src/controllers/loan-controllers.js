@@ -1,9 +1,8 @@
-// controllers/loanController.js
 import db from "../config/db.js";
 
 export async function getLoans(req, res) {
   try {
-    const [rows] = await db.query("SELECT * FROM loan");
+    const [rows] = await db.query("SELECT * FROM loans");
     res.json({ success: true, data: rows });
   } catch (err) {
     console.error(err);
@@ -13,7 +12,7 @@ export async function getLoans(req, res) {
 
 export async function getLoanById(req, res) {
   try {
-    const [rows] = await db.query("SELECT * FROM loan WHERE loan_id=?", [
+    const [rows] = await db.query("SELECT * FROM loans WHERE loan_id=?", [
       req.params.id,
     ]);
     if (rows.length === 0) {
@@ -36,13 +35,14 @@ export async function createLoan(req, res) {
       start_date,
       end_date,
       status,
+      interest_rate,
     } = req.body;
 
     const [result] = await db.query(
-      `INSERT INTO loan 
-        (loan_application_id, loan_amount, staff_id, start_date, end_date, status) 
-       VALUES (?,?,?,?,?,?)`,
-      [loan_application_id, loan_amount, staff_id, start_date, end_date, status]
+      `INSERT INTO loans
+        (loan_application_id, loan_amount, staff_id, start_date, end_date, status, interest_rate) 
+       VALUES (?,?,?,?,?,?,?)`,
+      [loan_application_id, loan_amount, staff_id, start_date, end_date, status, interest_rate]
     );
 
     res.json({ success: true, id: result.insertId });
@@ -61,11 +61,12 @@ export async function updateLoan(req, res) {
       start_date,
       end_date,
       status,
+      interest_rate,
     } = req.body;
 
     await db.query(
-      `UPDATE loan 
-       SET loan_application_id=?, loan_amount=?, staff_id=?, start_date=?, end_date=?, status=? 
+      `UPDATE loans 
+       SET loan_application_id=?, loan_amount=?, staff_id=?, start_date=?, end_date=?, status=?, interest_rate=? 
        WHERE loan_id=?`,
       [
         loan_application_id,
@@ -74,6 +75,7 @@ export async function updateLoan(req, res) {
         start_date,
         end_date,
         status,
+        interest_rate,
         req.params.id,
       ]
     );
@@ -87,7 +89,7 @@ export async function updateLoan(req, res) {
 
 export async function deleteLoan(req, res) {
   try {
-    await db.query("DELETE FROM loan WHERE loan_id=?", [req.params.id]);
+    await db.query("DELETE FROM loans WHERE loan_id=?", [req.params.id]);
     res.json({ success: true });
   } catch (err) {
     console.error(err);

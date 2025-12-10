@@ -32,11 +32,11 @@ export async function getLoanInsuranceById(req, res) {
 // Create new insurance
 export async function createLoanInsurance(req, res) {
   try {
-    const { loan_id, provider_name, policy_number, coverage_amount } = req.body;
+    const { loan_id, insurance_provider, coverage_amount, premium } = req.body;
 
     const [result] = await db.query(
-      "INSERT INTO loan_insurance (loan_id, provider_name, policy_number, coverage_amount) VALUES (?,?,?,?)",
-      [loan_id, provider_name, policy_number, coverage_amount]
+      "INSERT INTO loan_insurance (loan_id, insurance_provider, coverage_amount, premium) VALUES (?,?,?,?)",
+      [loan_id, insurance_provider, coverage_amount, premium]
     );
 
     res.json({ success: true, id: result.insertId });
@@ -49,11 +49,11 @@ export async function createLoanInsurance(req, res) {
 // Update insurance
 export async function updateLoanInsurance(req, res) {
   try {
-    const { loan_id, provider_name, policy_number, coverage_amount } = req.body;
+    const { loan_id, insurance_provider, coverage_amount, premium } = req.body;
 
     await db.query(
-      "UPDATE loan_insurance SET loan_id=?, provider_name=?, policy_number=?, coverage_amount=? WHERE insurance_id=?",
-      [loan_id, provider_name, policy_number, coverage_amount, req.params.id]
+      "UPDATE loan_insurance SET loan_id=?, insurance_provider=?, coverage_amount=?, premium=? WHERE insurance_id=?",
+      [loan_id, insurance_provider, coverage_amount, premium, req.params.id]
     );
 
     res.json({ success: true });

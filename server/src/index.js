@@ -19,6 +19,7 @@ import complaintsRoutes from './routes/complaintsRoutes.js';
 import paymentMethodRoutes from './routes/paymentMethodsRoutes.js';
 import loanWriteOffRoutes from './routes/loanWriteOffRoutes.js';
 import loanInsuranceRoutes from './routes/loanInsuranceRoutes.js';
+import statisticsRoutes from './routes/statistics-routes.js';
 
 
 dotenv.config();
@@ -50,11 +51,15 @@ app.use('/api/role', rolesRoutes);
 app.use('/api/loans', loanRoutes);
 app.use("/api/repayments", repaymentRouter);
 app.use("/api/collateral", collateralRoutes);
-app.use('/api/guarantor', guarantorRoutes);
+app.use('/api/guarantors', guarantorRoutes);
 app.use('/api/loandisbursements', loanDisbursementRoutes);
 app.use('/api/complaints', complaintsRoutes);
-app.use('/api/paymentmethods', paymentMethodRoutes);
+app.use('/api/payment_methods', paymentMethodRoutes);
 app.use('/api/loanwriteoff', loanWriteOffRoutes);
-app.use('/api/loaninsurance', loanInsuranceRoutes);
+app.use('/api/loan_insurance', loanInsuranceRoutes);
+app.use('/api/statistics', statisticsRoutes)
 
 app.listen(PORT, ()=>console.log(`server is listening on port: ${PORT}`));
+
+
+

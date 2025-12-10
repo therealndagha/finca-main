@@ -1,5 +1,5 @@
 
-// use mysql2 but no TypeScript typing headaches
+
 import mysql from 'mysql2/promise'; // promise API from mysql2
 
 const pool = mysql.createPool({

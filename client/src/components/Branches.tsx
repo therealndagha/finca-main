@@ -22,6 +22,7 @@ export default function Branches() {
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   useEffect(() => {
     fetchBranches();
@@ -115,25 +116,30 @@ export default function Branches() {
     setEditingId(null);
   }
 
+  // Statistics
+  const totalBranches = branches.length;
+
   return (
     <div>
       <Navbar />
       <div className="flex flex-col">
-        {/* blue header */}
+        {/* Header */}
         <div className="bg-blue-950 text-white py-5 pl-5 space-y-2">
           <h1 className="text-5xl font-roboto">Branches</h1>
           <p className="font-inter">
-            FINCA Malawi has{" "}
-            {branches && branches.length > 0 ? (
-              <span>{branches.length}</span>
-            ) : (
-              "no"
-            )}{" "}
-            registered branches
+            FINCA Malawi has {totalBranches} registered branches
           </p>
         </div>
 
-        {/* form */}
+        {/* Statistics */}
+        <div className="grid grid-cols-1 sm:grid-cols-1 gap-4 px-6 mt-4">
+          <div className="bg-purple-100 border-l-4 border-purple-600 p-4 rounded-lg shadow-md">
+            <h3 className="text-lg font-semibold text-purple-700">Total Branches</h3>
+            <p className="text-3xl font-bold">{totalBranches}</p>
+          </div>
+        </div>
+
+        {/* Form */}
         <div className="mx-auto max-w-7xl px-4 py-8 w-full">
           <h2 className="text-xl font-semibold mb-4">
             {editingId ? "Edit Branch" : "Add Branch"}
@@ -169,11 +175,7 @@ export default function Branches() {
                 disabled={saving}
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
               >
-                {saving
-                  ? "Saving..."
-                  : editingId
-                  ? "Update Branch"
-                  : "Add Branch"}
+                {saving ? "Saving..." : editingId ? "Update Branch" : "Add Branch"}
               </button>
               {editingId && (
                 <button
@@ -187,63 +189,73 @@ export default function Branches() {
             </div>
           </form>
 
-          <h3 className="text-3xl font-roboto mb-4 text-blue-950">All Branches</h3>
-          {loading && (
-            <div className="flex flex-row items-center justify-center mt-5">
-              <p className="text-3xl">Loading branches please wait...</p>
-              <Spinner />
-            </div>
-          )}
-          {error && <div className="text-red-600">Error: {error}</div>}
-          {!loading && !error && (
+          {/* Collapse / Expand Button */}
+          <div className="px-6 mb-2">
+            <button
+              onClick={() => setCollapsed((prev) => !prev)}
+              className="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300"
+            >
+              {collapsed ? "Expand Branches Table" : "Collapse Branches Table"}
+            </button>
+          </div>
+
+          {/* Table */}
+          {!collapsed && (
             <div className="overflow-x-auto">
-              <table className="min-w-full text-left border-separate border-spacing-0 font-open-sans">
-                <thead>
-                  <tr className="bg-blue-950 text-white font-inter">
-                    <th className="px-4 py-3 rounded-tl-2xl">ID</th>
-                    <th className="px-4 py-3">Name</th>
-                    <th className="px-4 py-3">Location</th>
-                    <th className="px-4 py-3">Phone</th>
-                    <th className="px-4 py-3 rounded-tr-2xl">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {branches.length === 0 && (
-                    <tr>
-                      <td colSpan={5} className="text-center py-4">
-                        No branches yet
-                      </td>
+              {loading ? (
+                <Spinner />
+              ) : error ? (
+                <div className="text-red-600">{error}</div>
+              ) : (
+                <table className="min-w-full text-left border-separate border-spacing-0 font-open-sans">
+                  <thead>
+                    <tr className="bg-blue-950 text-white font-inter">
+                      <th className="px-4 py-3 rounded-tl-2xl">ID</th>
+                      <th className="px-4 py-3">Name</th>
+                      <th className="px-4 py-3">Location</th>
+                      <th className="px-4 py-3">Phone</th>
+                      <th className="px-4 py-3 rounded-tr-2xl">Actions</th>
                     </tr>
-                  )}
-                  {branches.map((b, idx) => (
-                    <tr
-                      key={b.branch_id}
-                      className={`${
-                        idx % 2 === 0 ? "bg-white" : "bg-gray-50"
-                      } hover:bg-blue-50 transition`}
-                    >
-                      <td className="px-4 py-3 text-blue-950">{b.branch_id}</td>
-                      <td className="px-4 py-3">{b.branch_name}</td>
-                      <td className="px-4 py-3">{b.location}</td>
-                      <td className="px-4 py-3">{b.phone_no}</td>
-                      <td className="px-4 py-3">
-                        <button
-                          onClick={() => handleEdit(b.branch_id)}
-                          className="text-blue-600 hover:underline mr-2"
+                  </thead>
+                  <tbody>
+                    {branches.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="text-center py-4">
+                          No branches yet
+                        </td>
+                      </tr>
+                    ) : (
+                      branches.map((b, idx) => (
+                        <tr
+                          key={b.branch_id}
+                          className={`${
+                            idx % 2 === 0 ? "bg-white" : "bg-gray-50"
+                          } hover:bg-blue-50 transition`}
                         >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(b.branch_id)}
-                          className="text-red-600 hover:underline"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                          <td className="px-4 py-3 text-blue-950">{b.branch_id}</td>
+                          <td className="px-4 py-3">{b.branch_name}</td>
+                          <td className="px-4 py-3">{b.location}</td>
+                          <td className="px-4 py-3">{b.phone_no}</td>
+                          <td className="px-4 py-3">
+                            <button
+                              onClick={() => handleEdit(b.branch_id)}
+                              className="text-blue-600 hover:underline mr-2"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDelete(b.branch_id)}
+                              className="text-red-600 hover:underline"
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              )}
             </div>
           )}
         </div>
